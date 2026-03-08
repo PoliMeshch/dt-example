@@ -1,0 +1,25 @@
+# Папки сборки
+build/
+out/
+bin/
+obj/
+
+# Объектные и исполняемые файлы
+*.o
+*.obj
+*.exe
+*.out
+
+# Временные файлы
+*.tmp
+*.log
+*.cache
+*.pid
+
+# Файлы IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+EOF
