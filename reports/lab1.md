@@ -276,7 +276,7 @@ index e69de29..d6c0ada 100644
 **Объяснение вывода:**
 - `git status` показывает, что файл `reports/lab1.md` изменен, но изменения еще не добавлены в индекс
 - `git diff` показывает конкретные добавленные строки (они помечены знаком `+`). Нечитаемые символы в угловых 
-скобках (например, <E0>) — это результат несоответствия кодировок: файл был сохранён в однобайтовой кодировке 
+скобках — это результат несоответствия кодировок: файл был сохранён в однобайтовой кодировке 
 Windows, а Git Bash ожидает UTF-8.
 
 *Примечание*: Позже в ходе работы кодировка файла была исправлена на UTF-8, что позволило корректно отображать
@@ -359,10 +359,6 @@ index 29315bc..738da36 100644
 
 1. Строка с именем студента и группы
 2. Строка 123456789 для демонстрации
-
-Нечитаемые символы в угловых скобках (<C2>, <FB>, <E8> и т.д.) — это следствие того, что
-исходный файл был сохранён в кодировке Windows-1251 (или CP-866), а Git Bash интерпретирует его как UTF-8.
-Само содержимое файла при этом не повреждено — оно корректно хранится в репозитории.
 
 *Примечание*: После исправления кодировки файла (см. п. 3.6) вывод git diff для этого же изменения выглядит следующим образом:
 
@@ -500,7 +496,7 @@ nothing added to commit but untracked files present (use "git add" to track)
 
 ### Этап 5. Ветвление версий
 
-##### 5.1. Вывод текущей ветки
+#### 5.1. Вывод текущей ветки
 
 ```bash
 git branch
@@ -514,7 +510,7 @@ git branch
 
 Звездочка * показывает текущую ветку. Сейчас мы находимся в ветке master.
 
-##### 5.2. Создание новой ветки и переключение на неё
+#### 5.2. Создание новой ветки и переключение на неё
 
 ```bash
 git checkout -b lab1-1
@@ -745,13 +741,16 @@ cat README.md
 **Вывод:** 
 
 ```
+<<<<<<< HEAD
 # Лабораторные работы по Git
 
 Выполнил студент: Мещерякова Полина Алексеевна, группа 5130201/50302.
+=======
 # Работа с Git в лабораторных
 
 Выполнил студент: Мещерякова Полина Алексеевна, группа 5130201/50302.
 Это строка добавлена в ветке lab1-1.
+>>>>>>> lab1-1
 ```
 
 **Разрешение конфликта:**
@@ -807,15 +806,15 @@ Hi PoliMeshch! You've successfully authenticated, but GitHub does not provide sh
 #### 7.4. Добавление удаленного репозитория
 
 ```bash
- git remote add origin https://github.com/PoliMeshch/dt-example.git
+git remote add origin git@github.com:PoliMeshch/dt-example.git
 git remote -v
 ```
 
 **Вывод:**
 
 ```
-origin  https://github.com/PoliMeshch/dt-example.git (fetch)
-origin  https://github.com/PoliMeshch/dt-example.git (push)
+origin  git@github.com:PoliMeshch/dt-example.git (fetch)
+origin  git@github.com:PoliMeshch/dt-example.git (push)
 ```
 
 #### 7.5. Отправка данных в удаленный репозиторий
@@ -837,17 +836,15 @@ git push -u origin main
 **Вывод:**
 
 ```
-info: please complete authentication in your browser...
 Enumerating objects: 24, done.
 Counting objects: 100% (24/24), done.
 Delta compression using up to 4 threads
 Compressing objects: 100% (19/19), done.
 Writing objects: 100% (24/24), 12.10 KiB | 1.73 MiB/s, done.
-Total 24 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
-remote: Resolving deltas: 100% (4/4), done.
-To https://github.com/PoliMeshch/dt-example.git
+Total 24 (delta 4), reused 0 (delta 0)
+To github.com:PoliMeshch/dt-example.git
  * [new branch]      main -> main
-branch 'main' set up to track 'origin/main'.
+Branch 'main' set up to track remote branch 'main' from 'origin'.
 ```
 
 **Объяснение:** Git упаковал и отправил 30 объектов (коммиты и файлы) на GitHub,
@@ -866,4 +863,148 @@ branch 'main' set up to track 'origin/main'.
 ```bash
 cd ..
 mkdir dt-example-clone
+```
+
+#### 8.2. Клонирование репозитория
+
+```bash
+git clone git@github.com:PoliMeshch/dt-example.git dt-example-clone
+```
+
+**Вывод:**
+
+```
+Cloning into 'dt-example-clone'...
+remote: Enumerating objects: 24, done.
+remote: Counting objects: 100% (24/24), done.
+remote: Compressing objects: 100% (15/15), done.
+remote: Total 24 (delta 4), reused 24 (delta 4), pack-reused 0 (from 0)
+Receiving objects: 100% (24/24), 12.10 KiB | 1.73 MiB/s, done.
+Resolving deltas: 100% (4/4), done.
+```
+
+**Пояснение:**git clone создает полную копию удаленного репозитория в указанной папке.
+GitHub отправил все файлы, коммиты и историю изменений.
+
+#### 8.3. Проверка совпадения файлов
+**Перехожу в клон и проверяю содержимое:**
+
+```bash
+cd dt-example-clone
+ls -la
+```
+
+**Вывод:**
+
+```
+total 21
+drwxr-xr-x 1 darel 197614   0 Mar  8 15:39 ./
+drwxr-xr-x 1 darel 197614   0 Mar  8 15:34 ../
+drwxr-xr-x 1 darel 197614   0 Mar  8 15:39 .git/
+-rw-r--r-- 1 darel 197614 170 Mar  8 15:39 README.md
+drwxr-xr-x 1 darel 197614   0 Mar  8 15:39 reports/
+```
+
+Полное совпадение с оригинальным репозиторием.
+
+#### 8.4. Добавление в клоне последних протоколов в отчет
+Открываю reports/lab1.md в клоне и добавляю описание этапов 6-7.
+
+```bash
+git add reports/lab1.md
+git commit -m "Добавила описание этапов 6-7 в отчет"
+```
+
+**Вывод:**
+
+```
+[main bdd6b91] Добавила описание этапов 6-7 в отчет
+ 1 file changed, 185 insertions(+), 25 deletions(-)
+```
+
+#### 8.5. Отправка изменений в удаленный репозиторий
+
+```bash
+git push
+```
+
+**Вывод:**
+
+```
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (4/4), 3.00 KiB | 1.50 MiB/s, done.
+Total 4 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To github.com:PoliMeshch/dt-example.git
+   43b1d22..bdd6b91  main -> main
+```
+
+Новый коммит отправлен на GitHub.
+
+#### 8.6. Возвращение в первый локальный репозиторий
+
+```bash
+cd ../dt-example
+```
+
+#### 8.7. Запрос обновлений
+
+```bash
+git fetch origin
+```
+
+**Вывод:**
+
+```
+remote: Enumerating objects: 7, done.
+remote: Counting objects: 100% (7/7), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 4 (delta 1), reused 4 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (4/4), 2.98 KiB | 234.00 KiB/s, done.
+From github.com:PoliMeshch/dt-example
+   43b1d22..bdd6b91  main       -> origin/main
+```
+
+**Объяснение вывода команды:** git fetch скачал информацию о новых коммитах с GitHub, но
+не применил их к рабочим файлам. Видно, что в удаленной ветке origin/main
+появился новый коммит bdd6b91, которого нет в локальной ветке main.
+
+#### 8.8. Синхронизация содержимого репозитория для основной ветки
+
+```bash
+git pull
+```
+
+**Вывод:**
+
+```
+Updating 43b1d22..bdd6b91
+Fast-forward
+ reports/lab1.md | 210 +++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 185 insertions(+), 25 deletions(-)
+```
+
+**Объяснение:** git pull скачал новые изменения с GitHub и сразу применил
+их к текущей ветке. Произошло fast-forward слияние. Теперь локальный
+репозиторий синхронизирован с удаленным.
+
+### Этап 9. История изменений.
+
+```bash
+git log --oneline
+```
+
+**Вывод:**
+
+```
+bdd6b91 (HEAD -> main, origin/main, origin/HEAD) Добавила описание этапов 6-7 в отчет
+43b1d22 Разрешила конфликт при слиянии lab1-1 в master
+eaa5e16 Изменила заголовок README и добавила части этапов 5-6 в отчет (ветка lab1-1)
+8a6e149 Изменила заголовок README.md в ветке master
+b3b26e0 Добавила описание этапов 3-5 в отчет (работа в ветке lab1-1)
+f4725b5 Добавила описание этапов 1-3 в отчет
+805ed14 Начальная структура репозитория: README и шаблон отчета
 ```
