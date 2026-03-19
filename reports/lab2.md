@@ -178,19 +178,19 @@ managing-protected-branches/about-protected-branches)
 **Порядок действий на GitHub:**
 
 1. Перейти в настройки репозитория
-2. Выбрать "Branches" в левом меню
-3. Нажать "Add classic branch protection rule"
-4. В поле "Branch name pattern" ввести "main"
-5. Установить защиту "Require a pull request before merging"
+2. Выбрать **Branches** в левом меню
+3. Нажать **Add classic branch protection rule**
+4. В поле **Branch name pattern** ввести "main"
+5. Установить защиту **Require a pull request before merging**
 6. Установить количество требуемых одобрений: 1
-7. Включить опцию "Do not allow bypassing the above settings"
-8. Нажать "Create"
+7. Включить опцию **Do not allow bypassing the above settings**
+8. Нажать **Create**
 
 **Замечания по настройке:**
 
 - В бесплатной версии GitHub правила защиты веток применяются только к публичным репозиториям. Мой репозиторий был приватным, 
 поэтому для демонстрации работы защиты я временно изменила видимость репозитория на публичную.
-- Опция "Do not allow bypassing the above settings" критически важна: без неё администраторы могут обходить защиту, и пуш в main 
+- Опция "Do not allow bypassing the above settings" критически важна: без неё администраторы могут обходить защиту, и пуш в `main`
 будет успешным (хотя GitHub покажет предупреждение "Bypassed rule violations"). После включения этой опции защита начинает работать 
 в полную силу для всех пользователей, включая владельца репозитория.
 
@@ -251,3 +251,73 @@ To github.com:PoliMeshch/dt-example.git
 
 **Результат:** Ветка `pr-test` успешно отправлена в удаленный репозиторий. В отличие от `main`, в эту ветку пушить можно 
 без ограничений.
+
+#### 2.5. Сохранение результатов этапа в отчете
+
+После завершения настройки и проверки защиты веток зафиксировала изменения в отчете:
+
+```bash
+git add reports/lab2.md
+git commit -m "Добавила описание этапа 2 в отчет"
+git push origin main
+```
+
+
+### Этап 3. Запросы на слияние
+
+#### 3.1. Изменения в ветке `pr-test`
+
+В ветке `pr-test` внесла изменения для демонстрации процесса создания Pull Request.
+
+```bash
+echo "# Тестовый PR" >> README.md
+git add README.md
+git commit -m "Добавила комментарий в README из ветки pr-test"
+git push origin pr-test
+```
+
+**Вывод:**
+
+```
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 4.80 KiB | 1.60 MiB/s, done.
+Total 7 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To github.com:PoliMeshch/dt-example.git
+   3275b70..6cdd9fd  pr-test -> pr-test
+```
+
+#### 3.2. Создание Pull Request на GitHub
+
+Через веб-интерфейс GitHub создала Pull Request из ветки `pr-test` в `main`:
+
+1. Перешла в репозиторий на GitHub
+2. Нажала вкладку **Pull requests**
+3. Нажала **New pull request**
+4. Выбрала:
+  - base: main
+  - compare: pr-test
+5. Нажала **Create pull request**
+6. Заполнила:
+  - Title: "Тестовый PR для проверки Git Flow"
+  - Description: "Демонстрация создания и принятия Pull Request"
+7. Нажала **Create pull request**
+
+#### 3.3. Принятие PR и слияние
+
+Для выполнения слияния временно отключила защиту ветки `main` в настройках GitHub. 
+Нажала **Merge pull request**, подтвердила слияние и сразу восстановила защиту.
+
+#### 3.4. Обновление локального репозитория
+
+После слияния на GitHub обновила локальную ветку `main`:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+**Результат:** Локальная ветка `main` синхронизирована с удаленным репозиторием, изменения из `pr-test` успешно влиты.
