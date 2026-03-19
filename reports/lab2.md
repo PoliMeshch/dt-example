@@ -125,3 +125,129 @@ git status
 git commit -m "Добавила структуру для лабораторных работ, .gitignore и шаблон отчета"
 git push origin main
 ```
+
+**Выводы:**
+
+```
+[main 3275b70] Добавила структуру для лабораторных работ, .gitignore и шаблон отчета
+ 3 files changed, 533 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 labs/lab2/lab2.cpp
+ create mode 100644 reports/lab2.md
+```
+```
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (8/8), 8.45 KiB | 961.00 KiB/s, done.
+Total 8 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To github.com:PoliMeshch/dt-example.git
+   a02fb8f..3275b70  main -> main
+```
+
+
+### Этап 2. Защита веток.
+
+#### 2.1. Изучение защиты веток в GitHub
+
+**Что такое защита веток**
+
+Защита веток (branch protection) — это набор правил для веток в репозитории GitHub, которые предотвращают
+случайные или неавторизованные изменения. Защита настраивается для конкретных веток (обычно для `main`).
+
+**Какие правила можно установить**
+
+Можно запретить прямой пуш в ветку, требуя создания Pull Request для любых изменений. Можно требовать 
+обязательное ревью от одного или нескольких разработчиков перед слиянием. Можно настаивать на прохождении 
+автоматических проверок (CI/CD). Также можно запретить удаление ветки или требовать, чтобы ветка была актуальна 
+относительно основной перед слиянием.
+
+**Зачем это нужно**
+
+Защита веток обеспечивает контроль качества кода, позволяет проводить ревью, предотвращает случайное внесение 
+ошибок в основную ветку и упрощает командную работу.
+
+**Источник:** [GitHub Docs](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/
+managing-protected-branches/about-protected-branches)
+
+#### 2.2. Настройка защиты ветки main на GitHub
+
+Для защиты ветки `main` от прямых изменений необходимо настроить правило, требующее создания Pull Request для любых изменений.
+
+**Порядок действий на GitHub:**
+
+1. Перейти в настройки репозитория
+2. Выбрать "Branches" в левом меню
+3. Нажать "Add classic branch protection rule"
+4. В поле "Branch name pattern" ввести "main"
+5. Установить защиту "Require a pull request before merging"
+6. Установить количество требуемых одобрений: 1
+7. Включить опцию "Do not allow bypassing the above settings"
+8. Нажать "Create"
+
+**Замечания по настройке:**
+
+- В бесплатной версии GitHub правила защиты веток применяются только к публичным репозиториям. Мой репозиторий был приватным, 
+поэтому для демонстрации работы защиты я временно изменила видимость репозитория на публичную.
+- Опция "Do not allow bypassing the above settings" критически важна: без неё администраторы могут обходить защиту, и пуш в main 
+будет успешным (хотя GitHub покажет предупреждение "Bypassed rule violations"). После включения этой опции защита начинает работать 
+в полную силу для всех пользователей, включая владельца репозитория.
+
+#### 2.3. Проверка защиты
+
+```bash
+echo "# Тест" >> README.md
+git add README.md
+git commit -m "Тестовый коммит"
+git push origin main
+```
+
+**Вывод:**
+
+```
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 347 bytes | 347.00 KiB/s, done.
+Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+remote: error: GH006: Protected branch update failed for refs/heads/main.
+remote:
+remote: - Changes must be made through a pull request.
+To github.com:PoliMeshch/dt-example.git
+ ! [remote rejected] main -> main (protected branch hook declined)
+error: failed to push some refs to 'github.com:PoliMeshch/dt-example.git'
+```
+
+```bash
+git reset --hard HEAD~1
+```
+
+*Примечание:* Тестовый коммит был успешно заблокирован защитой веток, что подтверждает корректность настроек. 
+Локальный коммит удалён командой `git reset`.
+
+#### 2.4. Создание ветки pr-test
+
+После настройки защиты основной ветки создала новую ветку `pr-test` и проверила возможность пуша в удаленный репозиторий.
+
+```bash
+git checkout -b pr-test
+git push origin pr-test
+```
+
+**Вывод:**
+
+```
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote:
+remote: Create a pull request for 'pr-test' on GitHub by visiting:
+remote:      https://github.com/PoliMeshch/dt-example/pull/new/pr-test
+remote:
+To github.com:PoliMeshch/dt-example.git
+ * [new branch]      pr-test -> pr-test
+```
+
+**Результат:** Ветка `pr-test` успешно отправлена в удаленный репозиторий. В отличие от `main`, в эту ветку пушить можно 
+без ограничений.
