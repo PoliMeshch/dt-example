@@ -10,9 +10,9 @@
 
 - **редактирование текстовых файлов:** Visual Studio Code;
 - **программирование на основном языке (C++):** Visual Studio Code;
-- **выполнение команд в консоли:** Git Bash, WSL (Windows Terminal);
+- **выполнение команд в консоли:** Git Bash, терминал WSL (через Windows Terminal или VS Code);
 - **навигация по файловой системе:** проводник Windows, командная строка, Visual Studio Code;
-- **работа с Git:** Git Bash, встроенный в VS Code.
+- **работа с Git:** Git Bash, Visual Studio Code.
 
 #### 1.2. Альтернативы
 
@@ -142,8 +142,8 @@ source ~/.bashrc
 
 *Теперь приглашение выглядит так:*
 
-```bash
-darel@MAIBENBEN-PC dt-example (prog-lab2)$
+```
+darel@MAIBENBEN-PC dt-example (lab3-report)$
 ```
 
 *Имя пользователя и хост зелёные, текущая папка синяя, ветка Git жёлтая.*
@@ -202,11 +202,14 @@ darel@MAIBENBEN-PC dt-example (prog-lab2)$
 
 #### 4.2. Реализованные настройки
 
-Были настроены следующие сочетания клавиш:
+Для настройки собственных сочетаний я открыла список горячих клавиш (`Ctrl+K Ctrl+S`), нашла нужные 
+команды и привязала к ним следующие сочетания:
 
-- `Ctrl+Shift+H` — сборка программы в WSL (компиляция проекта)
-- `Ctrl+Shift+J` — запуск программы в режиме отладки (релизная сборка)
-- `Ctrl+Shift+K` — запуск автоматических тестов
+- `Ctrl+Shift+H` — сборка программы в WSL (`workbench.action.tasks.build`)
+- `Ctrl+Shift+J` — запуск программы в режиме отладки (`workbench.action.debug.start`)
+- `Ctrl+Shift+K` — запуск автоматических тестов (`workbench.action.tasks.runTask`)
+
+Все три сочетания были проверены и работают корректно.
 
 **Источники:**
 - [VS Code Keyboard Shortcuts](https://code.visualstudio.com/docs/getstarted/keybindings)
@@ -229,10 +232,9 @@ darel@MAIBENBEN-PC dt-example (prog-lab2)$
 *Accept Current Change*, *Accept Incoming Change*, *Accept Both Changes*, *Compare Changes*. 
 После выбора сохранить файл и выполнить коммит.
 
-В ходе работы над предыдущими лабораторными я использовала Git через терминал: `git add`, `git commit`, `git push`. 
-Разрешение конфликта (во второй лабораторной) происходило в редакторе VS Code — я вручную убирала маркеры `<<<<<<<`, 
-`=======`, `>>>>>>>` и сохраняла файл. Панель *Source Control* использовала только для просмотра списка изменённых 
-файлов перед коммитом.
+В ходе предыдущих лабораторных я работала с Git через терминал, а панель *Source Control* использовала только 
+для просмотра изменений. Для проверки интеграции в рамках этой работы я внесла тестовое изменение в `README.md`, 
+сделала коммит через панель *Source Control* и отправила его на GitHub — всё отработало без ошибок.
 
 **Источники:**
 - [VS Code Version Control](https://code.visualstudio.com/docs/editor/versioncontrol)
