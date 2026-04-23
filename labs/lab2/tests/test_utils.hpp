@@ -26,7 +26,7 @@ bool compare_data(const unsigned char* data1, const unsigned char* data2, size_t
 bool test_file_class(IFile& file, const unsigned char* original_data, size_t data_size) {
     size_t written = 0;
     while (written < data_size) {
-        size_t chunk = (data_size - written) > 256 ? 256 : (data_size - written);
+        size_t chunk = (data_size - written) > 200 ? 200 : (data_size - written);
         size_t w = file.write(original_data + written, chunk);
         if (w != chunk) return false;
         written += w;
