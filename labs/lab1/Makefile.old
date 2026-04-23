@@ -1,0 +1,78 @@
+# Правила для каждого .o файла
+build/rect.o: src/rect.cpp src/rect.hpp
+	g++ -g -c -o build/rect.o src/rect.cpp
+
+build/barrel.o: src/barrel.cpp src/barrel.hpp
+	g++ -g -c -o build/barrel.o src/barrel.cpp
+
+build/matrix.o: src/matrix.cpp src/matrix.hpp
+	g++ -g -c -o build/matrix.o src/matrix.cpp
+
+build/my_string.o: src/my_string.cpp src/my_string.hpp
+	g++ -g -c -o build/my_string.o src/my_string.cpp
+
+build/text_wrapper.o: src/text_wrapper.cpp src/text_wrapper.hpp
+	g++ -g -c -o build/text_wrapper.o src/text_wrapper.cpp
+
+# Сборка отладочной версии
+build/debug.out: build/rect.o build/barrel.o build/matrix.o build/my_string.o build/text_wrapper.o src/lab1.cpp
+	g++ -g -DDEBUG_CONSTRUCTORS -o build/debug.out src/lab1.cpp build/rect.o build/barrel.o build/matrix.o build/my_string.o build/text_wrapper.o
+
+# Цель для запуска
+debug: build/debug.out
+	gdb build/debug.out
+
+
+# Проверка утечек памяти
+build/leaks.out: src/lab1.cpp src/rect.cpp src/barrel.cpp src/matrix.cpp src/my_string.cpp src/text_wrapper.cpp
+	g++ -g -fsanitize=address -o build/leaks.out src/lab1.cpp src/rect.cpp src/barrel.cpp src/matrix.cpp src/my_string.cpp src/text_wrapper.cpp
+
+leaks: build/leaks.out
+	./build/leaks.out < tests/test_input.txt
+
+# Проверка базовых методов класса Rect
+build/test_rect_basic_methods.out: tests/test_rect_basic_methods.cpp src/rect.cpp
+	g++ -g -o build/test_rect_basic_methods.out tests/test_rect_basic_methods.cpp src/rect.cpp
+
+test_basic: build/test_rect_basic_methods.out
+	./build/test_rect_basic_methods.out
+
+
+# Проверка свойств класса Rect
+build/test_rect_properties.out: tests/test_rect_properties.cpp src/rect.cpp
+	g++ -g -o build/test_rect_properties.out tests/test_rect_properties.cpp src/rect.cpp
+
+test_properties: build/test_rect_properties.out
+	./build/test_rect_properties.out
+
+
+# Проверка операций в классе Rect
+build/test_rect_operations.out: tests/test_rect_operations.cpp src/rect.cpp
+	g++ -g -o build/test_rect_operations.out tests/test_rect_operations.cpp src/rect.cpp
+
+test_operations: build/test_rect_operations.out
+	./build/test_rect_operations.out
+
+
+# Проверка функции bounding_rect
+build/test_bounding_rect.out: tests/test_bounding_rect.cpp src/rect.cpp
+	g++ -g -o build/test_bounding_rect.out tests/test_bounding_rect.cpp src/rect.cpp
+
+test_bounding: build/test_bounding_rect.out
+	./build/test_bounding_rect.out
+
+
+test: test_basic test_properties test_operations test_bounding
+	@echo "Все тесты пройдены!"
+
+
+# Версия с отладкой конструкторов (для заданий 1.2-1.6)
+build/debug_ctors.out: src/lab1.cpp src/rect.cpp src/barrel.cpp src/matrix.cpp src/my_string.cpp src/text_wrapper.cpp
+	g++ -g -DDEBUG_CONSTRUCTORS -o build/debug_ctors.out src/lab1.cpp src/rect.cpp src/barrel.cpp src/matrix.cpp src/my_string.cpp src/text_wrapper.cpp
+
+run_ctors: build/debug_ctors.out
+	./build/debug_ctors.out
+
+# Запуск без вывода конструкторов
+run: build/debug.out
+	./build/debug.out

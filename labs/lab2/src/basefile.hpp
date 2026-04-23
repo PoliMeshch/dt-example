@@ -30,8 +30,19 @@ public:
     BaseFile& operator=(const BaseFile&) = delete;
 
     // Разрешение перемещения, чтобы возвращать объект из функции
-    BaseFile(BaseFile&&) = default;
-    BaseFile& operator=(BaseFile&&) = default;
+    /* BaseFile(BaseFile&&) = default;
+    BaseFile& operator=(BaseFile&&) = default; */
+    // Изменение: пишу методы перемещения вручную с обнулением указателей
+    BaseFile(BaseFile&& other) noexcept;
+    BaseFile& operator=(BaseFile&& other) noexcept;
+
+    // TODO:Работает ли эти конструктор и оператор? Или они тоже удалены? Если работают, то как?
+
+    // Конструктор перемещения и move-оператор работают, они не удалены (в отличие от копирующих).
+    // При = default компилятор генерирует их, но копирует указатели, не обнуляя исходный объект.
+    // Это опасно: после перемещения исходный объект всё ещё указывает на файл и при удалении
+    // закроет его, а перемещённый объект останется с висячим указателем.
+    // Чтобы избежать этого, я написала move-методы вручную с обнулением other.file и other.open_mode.
 
     bool is_open() const;
     bool can_read() const;
