@@ -73,9 +73,9 @@ echo -n "Мещерякова Полина Алексеевна" | md5sum
 - Оперативная память: 4096 МБ
 - Виртуальный диск: 25 ГБ
 
-![alt text](imgs/lab4_imgs/vm-creation-1.png)
+![Создание виртуальной машины, шаг 1](imgs/lab4_imgs/vm-creation-1.png)
 
-![alt text](imgs/lab4_imgs/vm-creation-2.png)
+![Создание виртуальной машины, шаг 2](imgs/lab4_imgs/vm-creation-2.png)
 
 #### 3.2 Загрузка и подключение образа.
 
@@ -86,34 +86,34 @@ echo -n "Мещерякова Полина Алексеевна" | md5sum
 
 Установка выполнена с использованием встроенного установщика Calamares.
 
-![alt text](imgs/lab4_imgs/installer-start.png)
+![Приветственный экран установщика](imgs/lab4_imgs/installer-start.png)
 
 Основные шаги:
 - Выбор языка интерфейса:
 
-![alt text](imgs/lab4_imgs/language-select.png)
+![Выбор языка интерфейса](imgs/lab4_imgs/language-select.png)
 - Выбор региона и часового пояса:
 
-![alt text](imgs/lab4_imgs/location-select.png)
+![Выбор региона и часового пояса](imgs/lab4_imgs/location-select.png)
 - Настройка клавиатуры:
 
-![alt text](imgs/lab4_imgs/keyboard-select.png)
+![Настройка клавиатуры](imgs/lab4_imgs/keyboard-select.png)
 - Разметка диска и настройка подкачки:
 
-![alt text](imgs/lab4_imgs/disk-swap-select.png)
+![Разметка диска и настройка подкачки](imgs/lab4_imgs/disk-swap-select.png)
 - Создание пользователя:
 
-![alt text](imgs/lab4_imgs/user-create.png)
+![Создание пользователя](imgs/lab4_imgs/user-create.png)
 
-![alt text](imgs/lab4_imgs/installer-finish.png)
+![Завершение установки](imgs/lab4_imgs/installer-finish.png)
 
 #### 3.4 Завершение установки.
 После копирования файлов виртуальная машина перезагрузилась. Система успешно загрузилась в 
 графическом режиме, вход выполнен под созданным пользователем:
 
-![alt text](imgs/lab4_imgs/login-screen.png)
+![Экран входа в систему](imgs/lab4_imgs/login-screen.png)
 
-![alt text](imgs/lab4_imgs/desktop.png)
+![Рабочий стол KDE Neon](imgs/lab4_imgs/desktop.png)
 
 
 ### 4. Настройка и установка пакетов
@@ -123,16 +123,16 @@ echo -n "Мещерякова Полина Алексеевна" | md5sum
 окнами — через панель задач или комбинацией `Alt + Tab`. На скриншоте показаны одновременно 
 открытые терминал, файловый менеджер и браузер.
 
-![alt text](imgs/lab4_imgs/windows-switch.png)
+![Несколько открытых окон](imgs/lab4_imgs/windows-switch.png)
 
 #### 4.2. Отслеживание системных ресурсов и управление процессами
 Установлен пакет `htop`:
 
-![alt text](imgs/lab4_imgs/htop-install.png)
+![Установка htop](imgs/lab4_imgs/htop-install.png)
 
 Запуск `htop` в терминале показывает загрузку CPU, памяти и список процессов:
 
-![alt text](imgs/lab4_imgs/htop.png)
+![Вывод команды htop](imgs/lab4_imgs/htop.png)
 
 - Верхняя часть показывает загрузку процессора (CPU), оперативной памяти 
 (Mem) и своп-раздела (Swap). Полосы разного цвета — разные типы нагрузки (например, 
@@ -144,18 +144,18 @@ echo -n "Мещерякова Полина Алексеевна" | md5sum
 Завершение процесса — клавиша `F9`. Нужно навести курсор на процесс и в открывшемся списке 
 выбрать `SIGTERM`, затем нажать `Enter`:
 
-![alt text](imgs/lab4_imgs/sigterm.png)
+![Завершение процесса через htop](imgs/lab4_imgs/sigterm.png)
 
 Команды `free -h` и `df -h` показывают память и место на диске:
 
-![alt text](imgs/lab4_imgs/comands.png)
+![Вывод команд](imgs/lab4_imgs/comands.png)
 
 
 #### 4.3. Настройка логина/пароля пользователя; блокировка экрана
 Пароль задаётся при установке, смена — `passwd`. Блокировка экрана — через меню KDE(Lock Screen) или 
 команду в терминале `loginctl lock-session`.
 
-![alt text](imgs/lab4_imgs/password-lock.png)
+![Смена пароля и блокировка экрана](imgs/lab4_imgs/password-lock.png)
 
 #### 4.4. Настройка сетевых подключений
 В VirtualBox используется NAT, интернет работает автоматически.
@@ -165,27 +165,27 @@ echo -n "Мещерякова Полина Алексеевна" | md5sum
 В терминале выполнена команда `ip a`. Результат показывает активный сетевой интерфейс (`enp0s3`) 
 с IP-адресом `10.0.2.15/24`, что подтверждает получение настроек от VirtualBox.
 
-![alt text](imgs/lab4_imgs/network-ip-a.png)
+![Вывод команды ip a](imgs/lab4_imgs/network-ip-a.png)
 
 **Проверка через графический интерфейс:**
 
 В разделе `System Settings → Connections` отображается активное подключение `Wired Connection 1`, 
 настроенное на автоматическое получение параметров (DHCP). В системном трее присутствует значок сети для быстрого управления.
 
-![alt text](imgs/lab4_imgs/wired.png)
+![Настройки сети в графическом интерфейсе](imgs/lab4_imgs/wired.png)
 
 **Проверка доступа в интернет:**
 
 Открыт браузер Firefox, загружена страница `github.com`. Интернет работает.
 
-![alt text](imgs/lab4_imgs/github-page.png)
+![Страница GitHub в Firefox](imgs/lab4_imgs/github-page.png)
 
 #### 4.5. Работа с файловой системой
 Файловый менеджер Dolphin в KDE Neon позволяет управлять файлами через графический интерфейс. 
 В терминале доступны стандартные команды: `mkdir` , `cd` , `touch`, `cp`, `mv`, `rm`. 
 Пример работы показан на скриншоте.
 
-![alt text](imgs/lab4_imgs/file_manager.png)
+![Файловый менеджер Dolphin](imgs/lab4_imgs/file_manager.png)
 
 #### 4.6. Выход в интернет
 Браузер Firefox установлен по умолчанию.
