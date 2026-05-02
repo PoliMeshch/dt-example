@@ -28,6 +28,25 @@ BaseFile::~BaseFile() {
     if (file != nullptr) fclose(file);
 }
 
+// Добавила реализацию move-методов 
+
+BaseFile::BaseFile(BaseFile&& other) noexcept
+    : file(other.file), open_mode(other.open_mode) {
+    other.file = nullptr;
+    other.open_mode = nullptr;
+}
+
+BaseFile& BaseFile::operator=(BaseFile&& other) noexcept {
+    if (this != &other) {
+        if (file != nullptr) fclose(file);
+        file = other.file;
+        open_mode = other.open_mode;
+        other.file = nullptr;
+        other.open_mode = nullptr;
+    }
+    return *this;
+}
+
 bool BaseFile::is_open() const { return file != nullptr; }
 bool BaseFile::can_read() const { 
     if (file == nullptr) return false; 
