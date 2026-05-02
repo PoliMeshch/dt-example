@@ -1,5 +1,6 @@
 # Папки сборки
 build/
+build_release/
 out/
 bin/
 obj/
