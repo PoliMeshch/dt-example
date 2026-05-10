@@ -18,7 +18,7 @@
 - **post-merge** - после слияния.
 - **post-checkout** - после переключения ветки.
 
-Источник: документация Git (https://git-scm.com/docs/githooks).
+Источник: [Документация Git Hooks](https://git-scm.com/docs/githooks)
 
 #### 1.2. Хук pre-commit: запрет файлов
 Создан хук, проверяющий добавляемые файлы на наличие запрещённых паттернов. 
@@ -85,7 +85,7 @@ exit 0
 ```
 
 *Примечание:* позже хук был доработан, в проверку добавлены русские заглавные буквы `[A-ZА-ЯЁ]`.
-Проверено тестовым коммитом с кириллицей — работает корректно.
+Проверено тестовым коммитом с кириллицей - работает корректно.
 
 Сделан исполняемым: `chmod +x .git/hooks/commit-msg`.
 
@@ -104,11 +104,19 @@ $ git commit -m "Test message"
 ### Этап 2. Хуки Git на стороне сервера
 
 #### 2.1. Конвертация Markdown в HTML
-Для конвертации Markdown в HTML установлен Pandoc:
+Для конвертации Markdown в HTML установлена утилита Pandoc. Она принимает `.md`-файл и 
+генерирует HTML-страницу. Флаг `-s` создаёт полноценный HTML-документ с заголовком, 
+`--metadata title` задаёт название страницы.
+
+Установка:
 
 ```bash
 sudo apt install pandoc
 ```
+
+Пример конвертации: `pandoc -s report.md -o report.html --metadata title="Название"`.
+
+Источник: [Официальный сайт Pandoc](https://pandoc.org/)
 
 #### 2.2. Создание копии репозитория и настройка remote
 Создана локальная копия репозитория, добавлена как удалённый репозиторий `server`:
@@ -171,4 +179,229 @@ To ../dt-example-copy
    38cf46c..4b8cf53  lab6-report -> lab6-report
 ```
 
-Хук отработал, HTML-файл создан. Файл `reports/lab6.html` открыт в браузере — отображается корректно.
+Хук отработал, HTML-файл создан. Файл `reports/lab6.html` открыт в браузере - отображается корректно:
+
+![Отчёт lab6.html открыт в браузере](imgs/lab6_imgs/lab6-html.png)
+
+
+### Этап 3. Сборка с помощью CMake
+
+#### 3.1. Основные понятия CMake
+CMake - система генерации файлов сборки. Основные конструкции:
+
+- `project()` - определение проекта.
+- `add_library()` - создание библиотеки.
+- `add_executable()` - создание исполняемого файла.
+- `target_link_libraries()` - линковка библиотек.
+- `target_include_directories()` - добавление путей к заголовкам.
+- `enable_testing()` и `add_test()` - настройка тестов.
+- `add_subdirectory()` - подключение поддиректорий.
+
+Источник: [Документация CMake](https://cmake.org/documentation/)
+
+#### 3.2. Переписывание сборки lab3 на CMake
+Проект лабораторной работы №3 переписан с Make на CMake.
+
+**Корневой `CMakeLists.txt`:**
+
+```cmake
+cmake_minimum_required(VERSION 3.15)
+project(Lab3 VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(mylib STATIC
+    src/my_string.cpp
+    src/matrix.cpp
+    src/worker_db.cpp
+    src/notification.cpp
+    src/notification_queue.cpp
+    src/notification_priority_queue.cpp
+    src/bool_array.cpp
+    src/basefile.cpp
+)
+
+target_include_directories(mylib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+add_executable(lab3 src/lab3.cpp)
+target_link_libraries(lab3 PRIVATE mylib)
+
+enable_testing()
+add_subdirectory(tests)
+```
+
+**`tests/CMakeLists.txt`:**
+
+```cmake
+add_executable(test_notification_priority_queue test_notification_priority_queue.cpp)
+target_link_libraries(test_notification_priority_queue PRIVATE mylib)
+add_test(NAME test_notification_priority_queue COMMAND test_notification_priority_queue
+         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+```
+
+#### 3.3. Сборка и запуск тестов
+
+```bash
+$ cmake -S . -B build
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting CXX compiler ABI info - done
+-- Configuring done (2.5s)
+-- Generating done (0.4s)
+-- Build files have been written to: .../labs/lab3/build
+
+$ cmake --build build
+[  7%] Building CXX object CMakeFiles/mylib.dir/src/my_string.cpp.o
+...
+[100%] Linking CXX executable test_notification_priority_queue
+[100%] Built target test_notification_priority_queue
+
+$ cd build && ctest --output-on-failure
+Test project .../labs/lab3/build
+    Start 1: test_notification_priority_queue
+1/1 Test #1: test_notification_priority_queue ...   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 1
+```
+
+
+### Этап 4. Автоматизация задач CMake в Git
+
+#### 4.1. Создание ветки dev
+
+```bash
+git checkout -b dev
+```
+
+#### 4.2. Хук pre-commit: прогон тестов в dev
+В хук `pre-commit` добавлена проверка для ветки `dev` - запуск CMake и CTest:
+
+```bash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" = "dev" ]; then
+    echo ">>> Запуск тестов для ветки dev..."
+    cd labs/lab3
+    cmake -S . -B build 2>/dev/null
+    cmake --build build 2>/dev/null
+    ctest --test-dir build --output-on-failure
+    if [ $? -ne 0 ]; then
+        echo ">>> Тесты не пройдены. Коммит прерван."
+        exit 1
+    fi
+    echo ">>> Тесты пройдены успешно."
+    cd ../..
+fi
+```
+
+#### 4.3. Хук post-commit: сборка библиотеки в dev
+Создан хук `post-commit` для сборки библиотеки после коммита в `dev`:
+
+```bash
+#!/bin/sh
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$BRANCH" = "dev" ]; then
+    echo ">>> Сборка библиотеки для ветки dev..."
+    cd labs/lab3
+    cmake --build build --target mylib 2>/dev/null
+    echo ">>> Библиотека собрана."
+    cd ../..
+fi
+
+exit 0
+```
+
+Сделан исполняемым: `chmod +x .git/hooks/post-commit`.
+
+#### 4.4. Тестирование обычного коммита
+
+```bash
+$ echo "// test" >> labs/lab3/src/lab3.cpp
+$ git add labs/lab3/src/lab3.cpp
+$ git commit -m "Test commit in dev"
+>>> Запуск тестов для ветки dev...
+...
+>>> Тесты пройдены успешно.
+>>> Сборка библиотеки для ветки dev...
+[100%] Built target mylib
+>>> Библиотека собрана.
+[dev 3cfaa38] Test commit in dev
+```
+
+#### 4.5. Тестирование merge
+
+```bash
+$ git merge lab6-report
+>>> Запуск тестов для ветки dev...
+...
+>>> Тесты пройдены успешно.
+>>> Сборка библиотеки для ветки dev...
+[100%] Built target mylib
+>>> Библиотека собрана.
+[dev 0ea3beb] Merge lab6-report into dev
+```
+
+Хуки работают корректно для обоих видов коммитов.
+
+
+### Этап 5. Автоматизация с помощью GitHub Actions
+
+#### 5.1. YAML
+YAML - язык для конфигурационных файлов. Основной синтаксис: ключ-значение, списки через `-`, 
+вложенность задаётся отступами. Поддерживает строки, числа, булевы значения, null.
+
+Источник: [Спецификация YAML](https://yaml.org/spec/)
+
+#### 5.2. Возможности и тарифы GitHub Actions
+GitHub Actions - встроенная CI/CD-система. Позволяет запускать сборку, тестирование и деплой 
+по событиям (push, pull request). Конфигурация задаётся YAML-файлами в `.github/workflows/`.
+
+Тарифы: для публичных репозиториев - бесплатно без ограничений. Для приватных репозиториев: 
+2000 минут/мес на тарифе Free, далее от $4/мес.
+
+Источник: [Документация GitHub Actions](https://docs.github.com/en/actions)
+
+#### 5.3. Workflow для CMake
+Файл `.github/workflows/cmake.yml`:
+
+```yaml
+name: CMake CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+
+      - name: Конфигурация CMake
+        run: cmake -S labs/lab3 -B labs/lab3/build
+
+      - name: Сборка проекта
+        run: cmake --build labs/lab3/build
+
+      - name: Запуск тестов
+        run: ctest --test-dir labs/lab3/build --output-on-failure
+```
+
+#### 5.4. Отладка и результат
+Workflow был запущен, первые два запуска завершились с ошибками:
+
+- **Ошибка 1:** `CMakeLists.txt` не был найден - файлы проекта не были запушены в репозиторий.
+- **Исправление:** добавлены `CMakeLists.txt` и исходные файлы lab3 в ветку `dev`.
+
+- **Ошибка 2:** линковщик не нашёл `main` - в `src/` оказался объектный файл `lab3` из предыдущей сборки, который мешал линковке.
+- **Исправление:** удалён объектный файл, он добавлен в корневой `.gitignore`.
+
+После исправлений последующие запуски workflow проходят успешно.
+
+![История запусков GitHub Actions](imgs/lab6_imgs/actions-history.png)
