@@ -84,6 +84,9 @@ esac
 exit 0
 ```
 
+*Примечание:* позже хук был доработан, в проверку добавлены русские заглавные буквы `[A-ZА-ЯЁ]`.
+Проверено тестовым коммитом с кириллицей — работает корректно.
+
 Сделан исполняемым: `chmod +x .git/hooks/commit-msg`.
 
 **Тестирование:**
@@ -112,12 +115,14 @@ sudo apt install pandoc
 
 ```bash
 git clone dt-example dt-example-copy
+cd dt-example
 git remote add server ../dt-example-copy
 ```
 
 В копии разрешён push в текущую ветку:
 
 ```bash
+cd ../dt-example-copy
 git config receive.denyCurrentBranch updateInstead
 ```
 
@@ -129,7 +134,7 @@ git config receive.denyCurrentBranch updateInstead
 
 while read oldrev newrev refname; do
     if [ "$refname" = "refs/heads/lab6-report" ]; then
-        cd "/home/darel/dt-example-copy"
+        cd "/mnt/c/Users/darel/dt-example-copy"
         git checkout -f lab6-report
         pandoc -s reports/lab6.md -o reports/lab6.html --metadata title="Lab 6"
         echo ">>> HTML обновлён: reports/lab6.html"
@@ -142,32 +147,28 @@ exit 0
 Сделан исполняемым: `chmod +x .git/hooks/post-receive`.
 
 #### 2.4. Проверка работы
-После пуша в `server` хук автоматически генерирует HTML-версию отчёта:
+Выполнен коммит и пуш в `server`:
 
 ```bash
-$ git push server lab6-report
-...
->>> HTML обновлён: reports/lab6.html
+cd /mnt/c/Users/darel/dt-example
+git add reports/lab6.md
+git commit -m "Added lab6 report"
+git push server lab6-report
 ```
 
-Файл `reports/lab6.html` открыт в браузере - отображается корректно, обновляется при новых пушах.
+Вывод:
 
+```
+[lab6-report 4b8cf53] Added lab6 report
+ 1 file changed, 173 insertions(+)
+ create mode 100644 reports/lab6.md
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Writing objects: 100% (4/4), 2.42 KiB | 137.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: >>> HTML обновлён: reports/lab6.html
+To ../dt-example-copy
+   38cf46c..4b8cf53  lab6-report -> lab6-report
+```
 
-darel@MAIBENBEN-PC MINGW64 ~
-$ git clone dt-example dt-example-copy
-Cloning into 'dt-example-copy'...
-done.
-Updating files: 100% (37/37), done.
-
-
-darel@MAIBENBEN-PC MINGW64 ~/dt-example (lab6-report)
-$ git remote -v
-origin  git@github.com:PoliMeshch/dt-example.git (fetch)
-origin  git@github.com:PoliMeshch/dt-example.git (push)
-server  ../dt-example-copy (fetch)
-server  ../dt-example-copy (push)
-
-
-darel@MAIBENBEN-PC MINGW64 ~/dt-example (lab6-report)
-$ git push server lab6-report
-Everything up-to-date
+Хук отработал, HTML-файл создан. Файл `reports/lab6.html` открыт в браузере — отображается корректно.
