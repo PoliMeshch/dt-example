@@ -1,0 +1,24 @@
+name: CMake CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+
+      - name: Конфигурация CMake
+        run: cmake -S labs/lab3 -B labs/lab3/build
+
+      - name: Сборка проекта
+        run: cmake --build labs/lab3/build
+
+      - name: Запуск тестов
+        run: ctest --test-dir labs/lab3/build --output-on-failure
