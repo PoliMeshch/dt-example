@@ -101,7 +101,7 @@ const Circle& List::get(size_t index) const {
     return current->m_Data;
 }
 
-void List::insert(size_t index, const Circle& c) {
+/* void List::insert(size_t index, const Circle& c) {
     if (index > m_size) throw std::out_of_range("Индекс за пределами допустимых значений");
     Node* current = Head.pNext;
     for (size_t i = 0; i < index; ++i) {
@@ -109,9 +109,23 @@ void List::insert(size_t index, const Circle& c) {
     }
     new Node(current->pPrev, current, c);
     ++m_size;
+} */
+
+void List::insert(Iterator pos, const Circle& c) {
+    Node* current = pos.node;
+    new Node(current->pPrev, current, c);
+    ++m_size;
 }
 
-bool List::removeAt(size_t index) {
+List::Iterator List::remove(Iterator pos) {
+    Node* current = pos.node;
+    Node* next = current->pNext;
+    delete current;
+    --m_size;
+    return Iterator(next);
+}
+
+/* bool List::removeAt(size_t index) {
     if (index >= m_size) return false;
     Node* current = Head.pNext;
     for (size_t i = 0; i < index; ++i) {
@@ -120,7 +134,7 @@ bool List::removeAt(size_t index) {
     delete current;
     --m_size;
     return true;
-}
+} */
 
 void List::addFirst(const Circle& c) {
     new Node(&Head, Head.pNext, c);

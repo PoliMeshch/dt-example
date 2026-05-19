@@ -43,6 +43,7 @@ private:
 public:
     class Iterator {
         Node* node;
+        friend class List;
     public:
         explicit Iterator(Node* n);
         Circle& operator*();
@@ -70,13 +71,14 @@ public:
 
     void addFirst(const Circle& c);
     void addLast(const Circle& c);
-    void insert(size_t index, const Circle& c);
-
+    // void insert(size_t index, const Circle& c);
+    void insert(Iterator pos, const Circle& c);
     const Circle& get(size_t index) const;
 
     bool deleteFirst(const Circle& c);
     int deleteAll(const Circle& c);
-    bool removeAt(size_t index);    
+    //bool removeAt(size_t index);    
+    Iterator remove(Iterator pos);
     void clear();
 
     size_t size() const;

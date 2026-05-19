@@ -32,8 +32,19 @@ int main() {
     cout << "После сортировки:" << endl;
     cout << list;
 
-    list.sort_by_area();
-    cout << "Повторная сортировка:" << endl;
+    cout << "Вставка (9,9,9) перед элементом с площадью > 100:" << endl;
+    for (List::Iterator it = list.begin(); it != list.end(); ++it) {
+        if ((*it).area() > 100) {
+            list.insert(it, Circle(9, 9, 9));
+            break;
+        }
+    }
+    cout << list;
+
+    cout << "Удаление второго элемента:" << endl;
+    List::Iterator it = list.begin();
+    ++it;
+    it = list.remove(it);
     cout << list;
 
     List copy(list);
@@ -48,20 +59,7 @@ int main() {
     cout << "Элемент[0]: " << list.get(0) << endl;
     cout << "Элемент[1]: " << list.get(1) << endl;
 
-    list.insert(1, Circle(9, 9, 9));
-    cout << "После вставки на позицию 1:" << endl;
-    cout << list;
-
-    list.removeAt(1);
-    cout << "После удаления позиции 1:" << endl;
-    cout << list;
-
-    cout << "Обход итератором:" << endl;
-    for (List::Iterator it = list.begin(); it != list.end(); ++it) {
-        cout << *it << endl;
-    }
-
-    std::ofstream fout("output.txt");
+    ofstream fout("output.txt");
     fout << list;
     fout.close();
 
@@ -69,13 +67,13 @@ int main() {
     cout << "После очистки:" << endl;
     cout << list;
 
-    std::ifstream fin("output.txt");
+    ifstream fin("output.txt");
     fin >> list;
     fin.close();
     cout << "После чтения из файла:" << endl;
     cout << list;
 
-    std::ifstream fin_bad("no_such_file.txt");
+    ifstream fin_bad("no_such_file.txt");
     if (fin_bad) {
         fin_bad >> list;
     }
@@ -107,16 +105,21 @@ int main() {
     cout << reverseList;
 
     int removed = reverseList.deleteAll(Circle(0, 0, 5));
-    cout << "Удаление всех элементов (0, 0, 5): удалено " << removed << endl;
+    cout << "Удаление всех (0,0,5): удалено " << removed << endl;
     cout << reverseList;
+
+    cout << "Обход итератором:" << endl;
+    for (List::Iterator iter = reverseList.begin(); iter != reverseList.end(); ++iter) {
+        cout << *iter << endl;
+    }
 
     list.clear();
     cout << "Финальный size: " << list.size() << endl;
 
     bool delEmpty = list.deleteFirst(c2);
     int delAllEmpty = list.deleteAll(c3);
-    cout << "Удаление из пустого: deleteFirst = " << (delEmpty ? "удалён" : "не найден")
-         << ", deleteAll = " << delAllEmpty << endl;
+    cout << "Удаление из пустого: deleteFirst=" << (delEmpty ? "удалён" : "не найден")
+         << " deleteAll=" << delAllEmpty << endl;
 
     return 0;
 }
